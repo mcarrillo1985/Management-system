@@ -1,0 +1,2130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Evaluation & Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .data-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 2;
+        }
+
+        .data-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .data-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        #import-file {
+            display: none;
+        }
+
+        .editable-title-main {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            border: 2px solid transparent;
+            padding: 5px;
+            border-radius: 5px;
+            cursor: text;
+            transition: all 0.3s ease;
+        }
+
+        .editable-title-main:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .editable-title-main:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .tab-container {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 3px solid #e9ecef;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 20px;
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .department-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            border-left: 5px solid #007bff;
+        }
+
+        .employee-navigation {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .employee-select {
+            padding: 10px 15px;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            background: white;
+            font-size: 1rem;
+            color: #495057;
+            cursor: pointer;
+            min-width: 200px;
+        }
+
+        .nav-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .add-employee-section {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px dashed #1976d2;
+        }
+
+        .add-employee-section h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+
+        .quick-add-form {
+            display: grid;
+            grid-template-columns: 200px 200px 200px 120px 80px;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .form-input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+
+        .manager-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .employee-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .employee-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .employee-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(135deg, #007bff, #6610f2);
+        }
+
+        .manager-card::before {
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+        }
+
+        .employee-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .employee-info {
+            flex: 1;
+        }
+
+        .editable-name, .editable-title {
+            background: transparent;
+            border: 1px solid transparent;
+            padding: 5px;
+            font-size: inherit;
+            font-weight: inherit;
+            color: inherit;
+            border-radius: 4px;
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+        .editable-name {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .editable-title {
+            color: #6c757d;
+            font-weight: 600;
+        }
+
+        .manager-badge {
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .employee-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .responsibilities {
+            margin-bottom: 20px;
+        }
+
+        .responsibilities h4 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .responsibility-header {
+            display: grid;
+            grid-template-columns: 30px 90px 30px 1fr 100px 150px 150px 60px;
+            gap: 10px;
+            padding: 12px;
+            background: #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #495057;
+            text-align: center;
+        }
+
+        .responsibility-header > div:nth-child(4) {
+            text-align: left;
+        }
+
+        .responsibility-item {
+            display: grid;
+            grid-template-columns: 30px 90px 30px 1fr 100px 150px 150px 60px;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            align-items: center;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            font-size: 0.7rem;
+        }
+
+        .checkbox-group input[type="radio"] {
+            transform: scale(0.9);
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .checkbox-group .doing {
+            color: #28a745;
+        }
+
+        .checkbox-group .sometimes {
+            color: #ffc107;
+        }
+
+        .checkbox-group .not-doing {
+            color: #dc3545;
+        }
+
+        .move-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 2px 6px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .move-btn:hover {
+            background: #495057;
+        }
+
+        .move-btn:disabled {
+            background: #dee2e6;
+            cursor: not-allowed;
+        }
+
+        .responsibility-checkbox {
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+
+        .responsibility-text {
+            background: transparent;
+            border: 1px solid transparent;
+            padding: 5px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        .weight-select {
+            padding: 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        .notes-input {
+            padding: 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            resize: vertical;
+            min-height: 30px;
+        }
+
+        .delete-resp-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .delete-resp-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+
+        .add-responsibility {
+            display: grid;
+            grid-template-columns: 1fr 80px;
+            gap: 10px;
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .add-responsibility input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .add-responsibility button {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .notes-section, .improvement-section {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .notes-section {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+
+        .improvement-section {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+
+        .notes-section h4, .improvement-section h4 {
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .editable-textarea {
+            width: 100%;
+            background: transparent;
+            border: 1px solid transparent;
+            padding: 8px;
+            border-radius: 4px;
+            min-height: 60px;
+            resize: vertical;
+        }
+
+        .completion-summary {
+            margin-top: 15px;
+            padding: 10px;
+            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .performance-dashboard {
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 20px;
+            border-top: 5px solid #28a745;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-header h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+
+        .dashboard-header p {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .employee-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .employee-bar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .employee-info-bar {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .employee-name-bar {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9rem;
+            margin-bottom: 2px;
+        }
+
+        .employee-dept {
+            font-size: 0.8rem;
+            color: #6c757d;
+            text-transform: capitalize;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 120px;
+            background: #e9ecef;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar-fill {
+            width: 100%;
+            background: linear-gradient(180deg, #28a745, #20c997);
+            border-radius: 8px;
+            position: absolute;
+            bottom: 0;
+            transition: height 0.8s ease;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding-bottom: 5px;
+        }
+
+        .progress-bar-fill.excellent {
+            background: linear-gradient(180deg, #28a745, #20c997);
+        }
+
+        .progress-bar-fill.good {
+            background: linear-gradient(180deg, #17a2b8, #138496);
+        }
+
+        .progress-bar-fill.average {
+            background: linear-gradient(180deg, #ffc107, #fd7e14);
+        }
+
+        .progress-bar-fill.needs-improvement {
+            background: linear-gradient(180deg, #dc3545, #c82333);
+        }
+
+        .score-text {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #495057;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .performance-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid;
+        }
+
+        .category-card.excellent {
+            border-left-color: #28a745;
+        }
+
+        .category-card.good {
+            border-left-color: #17a2b8;
+        }
+
+        .category-card.average {
+            border-left-color: #ffc107;
+        }
+
+        .category-card.needs-improvement {
+            border-left-color: #dc3545;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+
+        .category-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .category-icon.excellent {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+
+        .category-icon.good {
+            background: linear-gradient(135deg, #17a2b8, #138496);
+        }
+
+        .category-icon.average {
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+        }
+
+        .category-icon.needs-improvement {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+        }
+
+        .category-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #2c3e50;
+        }
+
+        .category-count {
+            background: #e9ecef;
+            color: #495057;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .employee-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .employee-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f8f9fa;
+            transition: all 0.2s ease;
+        }
+
+        .employee-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .employee-list-item:hover {
+            background: #f8f9fa;
+            margin: 0 -10px;
+            padding-left: 10px;
+            padding-right: 10px;
+            border-radius: 8px;
+        }
+
+        .employee-name-list {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .employee-dept-list {
+            font-size: 0.8rem;
+            color: #6c757d;
+            text-transform: capitalize;
+        }
+
+        .employee-score-list {
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .employee-score-list.excellent {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .employee-score-list.good {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .employee-score-list.average {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .employee-score-list.needs-improvement {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        @media (max-width: 768px) {
+            .quick-add-form {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .employee-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .responsibility-item {
+                grid-template-columns: 30px 30px 1fr;
+                gap: 10px;
+            }
+            
+            .chart-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            
+            .summary-stats {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="data-controls">
+                <button class="data-btn" onclick="exportData()">📁 Export Data</button>
+                <button class="data-btn" onclick="document.getElementById('import-file').click()">📂 Import Data</button>
+                <input type="file" id="import-file" accept=".json" onchange="importData(event)">
+            </div>
+            <div class="header-content">
+                <h1 class="editable-title-main" contenteditable="true" onblur="updateSystemTitle(this.textContent)">Employee Evaluation & Management System</h1>
+                <p>Manage and evaluate your team across all departments</p>
+            </div>
+        </div>
+
+        <div class="tab-container">
+            <button class="tab active" onclick="openTab(event, 'driver-management')">Driver Management</button>
+            <button class="tab" onclick="openTab(event, 'afterhours')">Afterhours Operations</button>
+            <button class="tab" onclick="openTab(event, 'roadside')">Roadside Assistance</button>
+            <button class="tab" onclick="openTab(event, 'recruitment')">Driver Recruitment</button>
+            <button class="tab" onclick="openTab(event, 'dispatcher')">Dispatcher</button>
+        </div>
+
+        <div id="driver-management" class="tab-content active">
+            <div class="department-header">
+                <div>
+                    <h2>Driver Management Department</h2>
+                    <p>Manage assigned drivers and units for operational efficiency</p>
+                </div>
+                <div class="employee-navigation">
+                    <span class="nav-label">Quick Navigate:</span>
+                    <select class="employee-select" id="employee-nav-driver-management" onchange="navigateToEmployee('driver-management', this.value)">
+                        <option value="">Select Employee...</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="add-employee-section">
+                <h3>➕ Add New Employee</h3>
+                <div class="quick-add-form">
+                    <input type="text" class="form-input" id="new-name-driver-management" placeholder="Employee Name" required>
+                    <input type="text" class="form-input" id="new-title-driver-management" placeholder="Job Title" required>
+                    <select class="form-input" id="copy-from-driver-management">
+                        <option value="">Default responsibilities</option>
+                    </select>
+                    <div class="manager-checkbox">
+                        <input type="checkbox" id="new-manager-driver-management">
+                        <label>Manager</label>
+                    </div>
+                    <button class="add-btn" onclick="addEmployee('driver-management')">Add</button>
+                </div>
+            </div>
+            
+            <div id="driver-management-employees" class="employee-grid"></div>
+        </div>
+
+        <div id="afterhours" class="tab-content">
+            <div class="department-header">
+                <div>
+                    <h2>Afterhours Operations Department</h2>
+                    <p>24/7 support for drivers and customer requests</p>
+                </div>
+                <div class="employee-navigation">
+                    <span class="nav-label">Quick Navigate:</span>
+                    <select class="employee-select" id="employee-nav-afterhours" onchange="navigateToEmployee('afterhours', this.value)">
+                        <option value="">Select Employee...</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="add-employee-section">
+                <h3>➕ Add New Employee</h3>
+                <div class="quick-add-form">
+                    <input type="text" class="form-input" id="new-name-afterhours" placeholder="Employee Name" required>
+                    <input type="text" class="form-input" id="new-title-afterhours" placeholder="Job Title" required>
+                    <select class="form-input" id="copy-from-afterhours">
+                        <option value="">Default responsibilities</option>
+                    </select>
+                    <div class="manager-checkbox">
+                        <input type="checkbox" id="new-manager-afterhours">
+                        <label>Manager</label>
+                    </div>
+                    <button class="add-btn" onclick="addEmployee('afterhours')">Add</button>
+                </div>
+            </div>
+            
+            <div id="afterhours-employees" class="employee-grid"></div>
+        </div>
+
+        <div id="roadside" class="tab-content">
+            <div class="department-header">
+                <div>
+                    <h2>Roadside Assistance Department</h2>
+                    <p>Emergency roadside support and maintenance coordination</p>
+                </div>
+                <div class="employee-navigation">
+                    <span class="nav-label">Quick Navigate:</span>
+                    <select class="employee-select" id="employee-nav-roadside" onchange="navigateToEmployee('roadside', this.value)">
+                        <option value="">Select Employee...</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="add-employee-section">
+                <h3>➕ Add New Employee</h3>
+                <div class="quick-add-form">
+                    <input type="text" class="form-input" id="new-name-roadside" placeholder="Employee Name" required>
+                    <input type="text" class="form-input" id="new-title-roadside" placeholder="Job Title" required>
+                    <select class="form-input" id="copy-from-roadside">
+                        <option value="">Default responsibilities</option>
+                    </select>
+                    <div class="manager-checkbox">
+                        <input type="checkbox" id="new-manager-roadside">
+                        <label>Manager</label>
+                    </div>
+                    <button class="add-btn" onclick="addEmployee('roadside')">Add</button>
+                </div>
+            </div>
+            
+            <div id="roadside-employees" class="employee-grid"></div>
+        </div>
+
+        <div id="recruitment" class="tab-content">
+            <div class="department-header">
+                <div>
+                    <h2>Driver Recruitment Department</h2>
+                    <p>Sourcing and recruiting qualified CDL drivers</p>
+                </div>
+                <div class="employee-navigation">
+                    <span class="nav-label">Quick Navigate:</span>
+                    <select class="employee-select" id="employee-nav-recruitment" onchange="navigateToEmployee('recruitment', this.value)">
+                        <option value="">Select Employee...</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="add-employee-section">
+                <h3>➕ Add New Employee</h3>
+                <div class="quick-add-form">
+                    <input type="text" class="form-input" id="new-name-recruitment" placeholder="Employee Name" required>
+                    <input type="text" class="form-input" id="new-title-recruitment" placeholder="Job Title" required>
+                    <select class="form-input" id="copy-from-recruitment">
+                        <option value="">Default responsibilities</option>
+                    </select>
+                    <div class="manager-checkbox">
+                        <input type="checkbox" id="new-manager-recruitment">
+                        <label>Manager</label>
+                    </div>
+                    <button class="add-btn" onclick="addEmployee('recruitment')">Add</button>
+                </div>
+            </div>
+            
+            <div id="recruitment-employees" class="employee-grid"></div>
+        </div>
+
+        <div id="dispatcher" class="tab-content">
+            <div class="department-header">
+                <div>
+                    <h2>Dispatcher Department</h2>
+                    <p>Coordinate loads and optimize route efficiency for drivers</p>
+                </div>
+                <div class="employee-navigation">
+                    <span class="nav-label">Quick Navigate:</span>
+                    <select class="employee-select" id="employee-nav-dispatcher" onchange="navigateToEmployee('dispatcher', this.value)">
+                        <option value="">Select Employee...</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="add-employee-section">
+                <h3>➕ Add New Employee</h3>
+                <div class="quick-add-form">
+                    <input type="text" class="form-input" id="new-name-dispatcher" placeholder="Employee Name" required>
+                    <input type="text" class="form-input" id="new-title-dispatcher" placeholder="Job Title" required>
+                    <select class="form-input" id="copy-from-dispatcher">
+                        <option value="">Default responsibilities</option>
+                    </select>
+                    <div class="manager-checkbox">
+                        <input type="checkbox" id="new-manager-dispatcher">
+                        <label>Manager</label>
+                    </div>
+                    <button class="add-btn" onclick="addEmployee('dispatcher')">Add</button>
+                </div>
+            </div>
+            
+            <div id="dispatcher-employees" class="employee-grid"></div>
+        </div>
+        
+        <div class="performance-dashboard">
+            <div class="dashboard-header">
+                <h2 id="dashboard-title">📊 Employee Performance Overview</h2>
+                <p id="dashboard-subtitle">Weighted performance scores for all non-management employees across departments</p>
+            </div>
+            
+            <div class="chart-container">
+                <div id="performance-chart" class="chart-grid">
+                    <!-- Chart will be populated by JavaScript -->
+                </div>
+                
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(180deg, #28a745, #20c997);"></div>
+                        <span>Excellent (90-100%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(180deg, #17a2b8, #138496);"></div>
+                        <span>Good (70-89%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(180deg, #ffc107, #fd7e14);"></div>
+                        <span>Average (50-69%)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(180deg, #dc3545, #c82333);"></div>
+                        <span>Needs Improvement (0-49%)</span>
+                    </div>
+                </div>
+                
+                <div class="summary-stats" id="summary-stats">
+                    <!-- Stats will be populated by JavaScript -->
+                </div>
+                
+                <!-- Performance Categories with Employee Lists -->
+                <div class="performance-categories" id="performance-categories">
+                    <!-- Categories will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Track selected employee for each department
+        let selectedEmployees = {
+            'driver-management': null,
+            'afterhours': null,
+            'roadside': null,
+            'recruitment': null,
+            'dispatcher': null
+        };
+
+        // Data structure to store employees
+        let employeeData = {
+            'driver-management': [],
+            'afterhours': [],
+            'roadside': [],
+            'recruitment': [],
+            'dispatcher': []
+        };
+
+        // Job descriptions for each department
+        const jobDescriptions = {
+            'driver-management': `Monitor and track assigned units for HOS and DOT compliance
+Verify driver license status and escalate issues
+Dispatch loads and maintain communication with brokers
+Conduct daily driver conversations and performance coaching
+Manage KPI benchmarks (MPG, fuel compliance, driver miles, etc.)
+Process payment adjustments and review payroll
+Ensure timely submission of load paperwork`,
+
+            'afterhours': `Assist drivers and customers via email and phone
+Monitor driver HOS and ETAs on current loads
+Dispatch weekend loads with verbal confirmation
+Provide track and trace updates for visibility
+Follow up on outbound loads and delays
+Coordinate road service with Ryder/Penske
+Perform GPS tracking and safety monitoring
+Maintain positive attitude and customer service`,
+
+            'roadside': `Maintain effective communication with drivers and departments
+Optimize team routes to reduce response times
+Assess priority and urgency of assistance requests
+Manage work team and resource allocation
+Receive and log roadside assistance requests
+Handle emergency situations and adverse conditions
+Coordinate preventive and corrective maintenance
+Maintain accurate records and incident reports`,
+
+            'recruitment': `Source and recruit qualified CDL drivers and owner-operators
+Use diverse recruitment channels including cold calls and referrals
+Dedicate minimum 4 hours daily to phone outreach
+Collaborate with driver managers on company needs
+Conduct thorough interviews and assess candidates
+Manage application process and documentation
+Complete clearinghouse checks and MVR reports
+Maintain recruitment pipeline and industry awareness`,
+
+            'dispatcher': `Plan and optimize delivery routes for maximum efficiency
+Coordinate with drivers on pickup and delivery schedules
+Monitor real-time traffic and weather conditions
+Communicate load assignments and route changes
+Track shipment progress and update customers
+Resolve routing issues and unexpected delays
+Maintain accurate records of dispatch activities
+Ensure compliance with DOT hours of service regulations`
+        };
+
+        // Initialize with sample data
+        function init() {
+            // Try to load data from browser storage first
+            const savedData = localStorage.getItem('employeeManagementData');
+            
+            if (savedData) {
+                try {
+                    employeeData = JSON.parse(savedData);
+                    console.log('Loaded data from browser storage');
+                    // Convert any old boolean evaluations to new 3-level system
+                    convertOldEvaluations();
+                } catch (error) {
+                    console.log('Error loading saved data, using defaults');
+                    loadDefaultData();
+                }
+            } else {
+                loadDefaultData();
+            }
+            
+            renderAllDepartments();
+        }
+
+        // Convert old boolean evaluations to new 3-level system
+        function convertOldEvaluations() {
+            Object.keys(employeeData).forEach(department => {
+                employeeData[department].forEach(employee => {
+                    if (employee.evaluations) {
+                        Object.keys(employee.evaluations).forEach(key => {
+                            const value = employee.evaluations[key];
+                            if (typeof value === 'boolean') {
+                                // Convert old boolean to new system
+                                employee.evaluations[key] = value ? 'doing' : 'not-doing';
+                            }
+                        });
+                    }
+                });
+            });
+            console.log('Converted old evaluation data to new 3-level system');
+        }
+
+        // Load default sample data
+        function loadDefaultData() {
+            employeeData = {
+                'driver-management': [
+                    {
+                        id: 1,
+                        name: 'Sarah Johnson',
+                        title: 'Driver Operations Manager',
+                        isManager: true,
+                        responsibilities: jobDescriptions['driver-management'].split('\n'),
+                        evaluations: {0: 'doing', 1: 'doing', 2: 'not-doing', 3: 'doing', 4: 'not-doing', 5: 'doing', 6: 'doing'},
+                        responsibilityWeights: {0: 3, 1: 4, 2: 2, 3: 3, 4: 2, 5: 1, 6: 2},
+                        responsibilityNotes: {
+                            0: { employee: 'Successfully monitoring 15 units daily', manager: 'Excellent compliance record' },
+                            2: { employee: 'Need better broker communication system', manager: 'Working on CRM implementation' }
+                        },
+                        notes: 'Excellent leadership skills. Consistently meets all KPI targets.',
+                        improvementPlan: 'Focus on mentoring junior staff and developing succession planning.'
+                    }
+                ],
+                'afterhours': [
+                    {
+                        id: 1,
+                        name: 'Mike Rodriguez',
+                        title: 'Afterhours Operations Manager',
+                        isManager: true,
+                        responsibilities: jobDescriptions['afterhours'].split('\n'),
+                        evaluations: {0: 'doing', 1: 'doing', 2: 'doing', 3: 'not-doing', 4: 'doing', 5: 'doing', 6: 'not-doing', 7: 'doing'},
+                        responsibilityWeights: {0: 2, 1: 3, 2: 4, 3: 2, 4: 3, 5: 2, 6: 1, 7: 2},
+                        responsibilityNotes: {
+                            3: { employee: 'Sometimes delayed in updates during busy nights', manager: 'Need to establish better protocols' }
+                        },
+                        notes: 'Strong customer service background. Great at handling emergency situations.',
+                        improvementPlan: 'Work on delegation skills to better distribute workload during peak hours.'
+                    }
+                ],
+                'roadside': [
+                    {
+                        id: 1,
+                        name: 'David Chen',
+                        title: 'Roadside Assistance Manager',
+                        isManager: true,
+                        responsibilities: jobDescriptions['roadside'].split('\n'),
+                        evaluations: {0: 'doing', 1: 'doing', 2: 'doing', 3: 'doing', 4: 'not-doing', 5: 'doing', 6: 'doing', 7: 'doing'},
+                        responsibilityWeights: {0: 3, 1: 4, 2: 2, 3: 3, 4: 3, 5: 1, 6: 2, 7: 2},
+                        responsibilityNotes: {
+                            4: { employee: 'Working on better emergency response procedures', manager: 'Good progress on emergency protocols' }
+                        },
+                        notes: 'Mechanical background very helpful. Quick response times.',
+                        improvementPlan: 'Develop better communication protocols for complex emergency situations.'
+                    }
+                ],
+                'recruitment': [
+                    {
+                        id: 1,
+                        name: 'Lisa Thompson',
+                        title: 'Driver Recruitment Manager',
+                        isManager: true,
+                        responsibilities: jobDescriptions['recruitment'].split('\n'),
+                        evaluations: {0: 'doing', 1: 'doing', 2: 'doing', 3: 'doing', 4: 'not-doing', 5: 'doing', 6: 'doing', 7: 'doing'},
+                        responsibilityWeights: {0: 3, 1: 2, 2: 4, 3: 3, 4: 2, 5: 3, 6: 1, 7: 2},
+                        responsibilityNotes: {
+                            4: { employee: 'Exploring LinkedIn and Facebook ads', manager: 'Budget approved for social media campaigns' }
+                        },
+                        notes: 'Excellent at building relationships with drivers. High conversion rate.',
+                        improvementPlan: 'Implement new social media recruitment strategies to expand candidate pool.'
+                    }
+                ],
+                'dispatcher': []
+            };
+        }
+
+        // Auto-save data
+        function autoSave() {
+            try {
+                localStorage.setItem('employeeManagementData', JSON.stringify(employeeData));
+            } catch (error) {
+                console.log('Error auto-saving data:', error);
+            }
+        }
+
+        // Tab functionality
+        function openTab(evt, tabName) {
+            var i, tabContent, tabs;
+            
+            tabContent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabContent.length; i++) {
+                tabContent[i].classList.remove("active");
+            }
+            
+            tabs = document.getElementsByClassName("tab");
+            for (i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active");
+            }
+            
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+            
+            // Update performance dashboard for current tab
+            renderPerformanceDashboard(tabName);
+        }
+
+        // Navigate to specific employee
+        function navigateToEmployee(department, employeeId) {
+            if (!employeeId) return;
+            
+            // Hide all employee cards first
+            const allCards = document.querySelectorAll(`#${department}-employees .employee-card`);
+            allCards.forEach(card => card.style.display = 'none');
+            
+            // Show only the selected employee card
+            const targetCard = document.getElementById(`employee-card-${department}-${employeeId}`);
+            if (targetCard) {
+                targetCard.style.display = 'block';
+                targetCard.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+                
+                // Add a visual highlight
+                targetCard.style.border = '3px solid #007bff';
+                targetCard.style.boxShadow = '0 0 20px rgba(0,123,255,0.3)';
+            }
+        }
+
+        // Update system title
+        function updateSystemTitle(newTitle) {
+            localStorage.setItem('systemTitle', newTitle || 'Employee Evaluation & Management System');
+        }
+
+        // Load system title
+        function loadSystemTitle() {
+            const savedTitle = localStorage.getItem('systemTitle');
+            if (savedTitle) {
+                const titleElement = document.querySelector('.editable-title-main');
+                if (titleElement) {
+                    titleElement.textContent = savedTitle;
+                }
+            }
+        }
+
+        // Update copy from dropdown options
+        function updateCopyFromOptions(department) {
+            console.log('updateCopyFromOptions called for department:', department);
+            const select = document.getElementById(`copy-from-${department}`);
+            console.log('Found dropdown element:', select);
+            if (!select) {
+                console.log('Copy-from select not found for department:', department);
+                return;
+            }
+            
+            const employees = employeeData[department] || [];
+            console.log(`Updating copy-from options for ${department}:`, employees.map(emp => emp.name));
+            
+            // Clear existing options except the first one
+            select.innerHTML = '<option value="">Default responsibilities</option>';
+            
+            // Add each employee as an option
+            employees.forEach(employee => {
+                const option = document.createElement('option');
+                option.value = employee.id;
+                option.textContent = `Copy from ${employee.name}`;
+                select.appendChild(option);
+                console.log(`Added option: Copy from ${employee.name}`);
+            });
+            
+            console.log('Final dropdown HTML:', select.innerHTML);
+        }
+        function updateEmployeeNavigation(department) {
+            const select = document.getElementById(`employee-nav-${department}`);
+            if (!select) return;
+            
+            const employees = employeeData[department];
+            
+            select.innerHTML = '<option value="">Select Employee...</option>';
+            
+            employees.forEach(employee => {
+                const option = document.createElement('option');
+                option.value = employee.id;
+                option.textContent = `${employee.name} - ${employee.title}`;
+                if (employee.isManager) {
+                    option.textContent += ' (Manager)';
+                }
+                select.appendChild(option);
+            });
+        }
+
+        // Add employee
+        function addEmployee(department) {
+            const nameInput = document.getElementById(`new-name-${department}`);
+            const titleInput = document.getElementById(`new-title-${department}`);
+            const managerInput = document.getElementById(`new-manager-${department}`);
+            
+            const name = nameInput.value.trim();
+            const title = titleInput.value.trim();
+            const isManager = managerInput.checked;
+            
+            if (!name || !title) {
+                alert('Please enter both name and title');
+                return;
+            }
+            
+            const hasManager = employeeData[department].some(emp => emp.isManager);
+            if (isManager && hasManager) {
+                alert('This department already has a manager');
+                return;
+            }
+            
+            if (employeeData[department].length >= 10) {
+                alert('Maximum 10 employees per department');
+                return;
+            }
+            
+            const newId = Date.now();
+            let responsibilities, evaluations, weights, notes;
+            
+            // Find first non-manager employee to copy from
+            const templateEmployee = employeeData[department].find(emp => !emp.isManager);
+            
+            if (templateEmployee) {
+                // Copy only responsibilities from first non-manager employee, reset everything else
+                responsibilities = [...templateEmployee.responsibilities];
+                evaluations = {};
+                weights = {};
+                notes = {};
+                responsibilities.forEach((resp, index) => {
+                    evaluations[index] = 'not-doing';
+                    weights[index] = 2;
+                });
+            } else {
+                // Use default responsibilities if no non-manager employees exist
+                responsibilities = jobDescriptions[department].split('\n');
+                evaluations = {};
+                weights = {};
+                notes = {};
+                responsibilities.forEach((resp, index) => {
+                    evaluations[index] = 'not-doing';
+                    weights[index] = 2;
+                });
+            }
+            
+            const newEmployee = {
+                id: newId,
+                name: name,
+                title: title,
+                isManager: isManager,
+                responsibilities: responsibilities,
+                evaluations: evaluations,
+                responsibilityWeights: weights,
+                responsibilityNotes: notes,
+                notes: '',
+                improvementPlan: ''
+            };
+            
+            employeeData[department].push(newEmployee);
+            
+            nameInput.value = '';
+            titleInput.value = '';
+            managerInput.checked = false;
+            
+            renderDepartment(department);
+            updateEmployeeNavigation(department);
+            renderPerformanceDashboard();
+            autoSave();
+        }
+
+        // Delete employee with confirmation
+        function deleteEmployee(department, employeeId) {
+            console.log('deleteEmployee function called with:', department, employeeId);
+            console.log('Current employees in department:', employeeData[department]);
+            
+            // Convert to number to ensure proper comparison
+            const numericId = parseInt(employeeId);
+            console.log('Looking for employee with numeric ID:', numericId);
+            
+            const employee = employeeData[department].find(emp => {
+                console.log('Checking employee:', emp.name, 'with ID:', emp.id, 'type:', typeof emp.id);
+                return parseInt(emp.id) === numericId;
+            });
+            
+            if (!employee) {
+                console.log('Employee not found:', employeeId, 'in department:', department);
+                alert('Employee not found!');
+                return;
+            }
+            
+            console.log('Found employee to delete:', employee.name);
+            
+            // Temporarily remove confirmation for testing
+            console.log('Proceeding with deletion...');
+            console.log('Before deletion - employees count:', employeeData[department].length);
+            
+            employeeData[department] = employeeData[department].filter(emp => {
+                const keep = parseInt(emp.id) !== numericId;
+                console.log('Employee', emp.name, 'keep:', keep);
+                return keep;
+            });
+            
+            console.log('After deletion - employees count:', employeeData[department].length);
+            console.log('Remaining employees:', employeeData[department].map(emp => emp.name));
+            
+            renderDepartment(department);
+            updateEmployeeNavigation(department);
+            renderPerformanceDashboard();
+            autoSave();
+            
+            console.log('Deletion process completed');
+        }
+
+        // Update employee field
+        function updateEmployeeField(department, employeeId, field, value) {
+            const employee = employeeData[department].find(emp => emp.id === employeeId);
+            if (employee) {
+                employee[field] = value;
+                autoSave();
+            }
+        }
+
+        // Update performance level
+        function updatePerformance(department, employeeId, respIndex, level) {
+            const employee = employeeData[department].find(emp => emp.id == employeeId);
+            if (employee) {
+                if (!employee.evaluations) employee.evaluations = {};
+                employee.evaluations[respIndex] = level;
+                updateCompletionSummary(department, employeeId);
+                renderPerformanceDashboard();
+                autoSave();
+            }
+        }
+
+        // Calculate weighted completion
+        function calculateWeightedCompletion(employee) {
+            if (!employee.responsibilities || employee.responsibilities.length === 0) return 0;
+            
+            let totalWeight = 0;
+            let earnedWeight = 0;
+            
+            employee.responsibilities.forEach((resp, index) => {
+                const weight = (employee.responsibilityWeights && employee.responsibilityWeights[index]) || 2;
+                totalWeight += weight;
+                
+                const performance = employee.evaluations ? employee.evaluations[index] : undefined;
+                
+                if (performance === 'doing') {
+                    earnedWeight += weight;
+                } else if (performance === 'sometimes') {
+                    earnedWeight += weight * 0.5;
+                }
+            });
+            
+            return totalWeight > 0 ? Math.round((earnedWeight / totalWeight) * 100) : 0;
+        }
+
+        // Update completion summary
+        function updateCompletionSummary(department, employeeId) {
+            const employee = employeeData[department].find(emp => emp.id == employeeId);
+            if (employee) {
+                const percentage = calculateWeightedCompletion(employee);
+                const doingCount = Object.values(employee.evaluations || {}).filter(val => val === 'doing').length;
+                const sometimesCount = Object.values(employee.evaluations || {}).filter(val => val === 'sometimes').length;
+                const total = employee.responsibilities.length;
+                
+                const summaryEl = document.getElementById(`summary-${department}-${employeeId}`);
+                if (summaryEl) {
+                    summaryEl.innerHTML = `Performance: ${percentage}% weighted (${doingCount} doing, ${sometimesCount} sometimes, ${total - doingCount - sometimesCount} not doing)`;
+                }
+            }
+        }
+
+        // Update weight
+        function updateWeight(department, employeeId, respIndex, weight) {
+            const employee = employeeData[department].find(emp => emp.id === employeeId);
+            if (employee) {
+                if (!employee.responsibilityWeights) employee.responsibilityWeights = {};
+                employee.responsibilityWeights[respIndex] = parseInt(weight);
+                updateCompletionSummary(department, employeeId);
+                renderPerformanceDashboard();
+                autoSave();
+            }
+        }
+
+        // Update notes
+        function updateNotes(department, employeeId, respIndex, noteType, value) {
+            const employee = employeeData[department].find(emp => emp.id === employeeId);
+            if (employee) {
+                if (!employee.responsibilityNotes) employee.responsibilityNotes = {};
+                if (!employee.responsibilityNotes[respIndex]) employee.responsibilityNotes[respIndex] = {};
+                employee.responsibilityNotes[respIndex][noteType] = value;
+                autoSave();
+            }
+        }
+
+        // Add responsibility
+        function addResponsibility(department, employeeId) {
+            const input = document.getElementById(`add-resp-${department}-${employeeId}`);
+            const text = input.value.trim();
+            
+            if (!text) return;
+            
+            const employee = employeeData[department].find(emp => emp.id === employeeId);
+            if (employee) {
+                const newIndex = employee.responsibilities.length;
+                employee.responsibilities.push(text);
+                employee.evaluations[newIndex] = 'not-doing';
+                employee.responsibilityWeights[newIndex] = 2;
+                
+                input.value = '';
+                renderDepartment(department);
+                autoSave();
+            }
+        }
+
+        // Delete responsibility with confirmation
+        function deleteResponsibility(department, employeeId, respIndex) {
+            console.log('deleteResponsibility called with:', department, employeeId, respIndex);
+            
+            // Convert to numbers to ensure proper comparison
+            const numericId = parseInt(employeeId);
+            const numericIndex = parseInt(respIndex);
+            
+            const employee = employeeData[department].find(emp => parseInt(emp.id) === numericId);
+            if (!employee) {
+                console.log('Employee not found for responsibility deletion:', employeeId);
+                return;
+            }
+            
+            if (numericIndex < 0 || numericIndex >= employee.responsibilities.length) {
+                console.log('Invalid responsibility index:', respIndex);
+                return;
+            }
+            
+            const responsibilityText = employee.responsibilities[numericIndex];
+            console.log('Deleting responsibility:', responsibilityText);
+            
+            // Remove confirmation dialog and proceed directly with deletion
+            console.log('Proceeding with responsibility deletion...');
+            console.log('Before deletion - responsibilities count:', employee.responsibilities.length);
+            
+            // Remove the responsibility
+            employee.responsibilities.splice(numericIndex, 1);
+            
+            // Rebuild evaluations, weights, and notes with proper indexing
+            const newEvaluations = {};
+            const newWeights = {};
+            const newNotes = {};
+            
+            // Process each remaining responsibility
+            employee.responsibilities.forEach((resp, newIndex) => {
+                const oldIndex = newIndex >= numericIndex ? newIndex + 1 : newIndex;
+                
+                // Copy over the data from the old index
+                if (employee.evaluations && employee.evaluations[oldIndex] !== undefined) {
+                    newEvaluations[newIndex] = employee.evaluations[oldIndex];
+                } else {
+                    newEvaluations[newIndex] = 'not-doing'; // Default value
+                }
+                
+                if (employee.responsibilityWeights && employee.responsibilityWeights[oldIndex] !== undefined) {
+                    newWeights[newIndex] = employee.responsibilityWeights[oldIndex];
+                } else {
+                    newWeights[newIndex] = 2; // Default weight
+                }
+                
+                if (employee.responsibilityNotes && employee.responsibilityNotes[oldIndex]) {
+                    newNotes[newIndex] = employee.responsibilityNotes[oldIndex];
+                }
+            });
+            
+            // Replace the old data with the new indexed data
+            employee.evaluations = newEvaluations;
+            employee.responsibilityWeights = newWeights;
+            employee.responsibilityNotes = newNotes;
+            
+            console.log('After deletion - responsibilities count:', employee.responsibilities.length);
+            console.log('Responsibility deletion completed');
+            
+            renderDepartment(department);
+            renderPerformanceDashboard();
+            autoSave();
+        }
+
+        // Move responsibility up or down
+        function moveResponsibility(department, employeeId, respIndex, direction) {
+            const employee = employeeData[department].find(emp => emp.id === employeeId);
+            if (!employee) return;
+            
+            const newIndex = direction === 'up' ? respIndex - 1 : respIndex + 1;
+            
+            if (newIndex < 0 || newIndex >= employee.responsibilities.length) return;
+            
+            [employee.responsibilities[respIndex], employee.responsibilities[newIndex]] = 
+            [employee.responsibilities[newIndex], employee.responsibilities[respIndex]];
+            
+            if (employee.evaluations) {
+                [employee.evaluations[respIndex], employee.evaluations[newIndex]] = 
+                [employee.evaluations[newIndex], employee.evaluations[respIndex]];
+            }
+            
+            if (employee.responsibilityWeights) {
+                [employee.responsibilityWeights[respIndex], employee.responsibilityWeights[newIndex]] = 
+                [employee.responsibilityWeights[newIndex], employee.responsibilityWeights[respIndex]];
+            }
+            
+            if (employee.responsibilityNotes) {
+                [employee.responsibilityNotes[respIndex], employee.responsibilityNotes[newIndex]] = 
+                [employee.responsibilityNotes[newIndex], employee.responsibilityNotes[respIndex]];
+            }
+            
+            renderDepartment(department);
+            autoSave();
+        }
+
+        // Render performance dashboard
+        function renderPerformanceDashboard(currentDepartment = null) {
+            const chartContainer = document.getElementById('performance-chart');
+            const statsContainer = document.getElementById('summary-stats');
+            const categoriesContainer = document.getElementById('performance-categories');
+            const dashboardTitle = document.getElementById('dashboard-title');
+            const dashboardSubtitle = document.getElementById('dashboard-subtitle');
+            
+            if (!chartContainer || !statsContainer || !categoriesContainer) return;
+            
+            // Get current active department if not specified
+            if (!currentDepartment) {
+                const activeTab = document.querySelector('.tab.active');
+                currentDepartment = activeTab ? activeTab.onclick.toString().match(/openTab\(event, '([^']+)'\)/)?.[1] : 'driver-management';
+            }
+            
+            // Update dashboard title and subtitle based on current department
+            const departmentNames = {
+                'driver-management': 'Driver Management',
+                'afterhours': 'Afterhours Operations', 
+                'roadside': 'Roadside Assistance',
+                'recruitment': 'Driver Recruitment',
+                'dispatcher': 'Dispatcher'
+            };
+            
+            const departmentName = departmentNames[currentDepartment] || 'Department';
+            dashboardTitle.textContent = `📊 ${departmentName} Performance Overview`;
+            dashboardSubtitle.textContent = `Weighted performance scores for non-management employees in ${departmentName}`;
+            
+            // Collect employees from current department only
+            const allEmployees = [];
+            if (employeeData[currentDepartment]) {
+                employeeData[currentDepartment].forEach(employee => {
+                    if (!employee.isManager) {
+                        allEmployees.push({
+                            ...employee,
+                            department: currentDepartment,
+                            score: calculateWeightedCompletion(employee)
+                        });
+                    }
+                });
+            }
+            
+            allEmployees.sort((a, b) => b.score - a.score);
+            
+            chartContainer.innerHTML = allEmployees.map(employee => {
+                const scoreClass = employee.score >= 90 ? 'excellent' :
+                                 employee.score >= 70 ? 'good' :
+                                 employee.score >= 50 ? 'average' : 'needs-improvement';
+                
+                return `
+                    <div class="employee-bar">
+                        <div class="employee-info-bar">
+                            <div class="employee-name-bar">${employee.name}</div>
+                            <div class="employee-dept">${employee.department.replace('-', ' ')}</div>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill ${scoreClass}" style="height: ${employee.score}%;">
+                                ${employee.score}%
+                            </div>
+                        </div>
+                        <div class="score-text">${employee.score}%</div>
+                    </div>
+                `;
+            }).join('');
+            
+            const categories = {
+                excellent: allEmployees.filter(emp => emp.score >= 90),
+                good: allEmployees.filter(emp => emp.score >= 70 && emp.score < 90),
+                average: allEmployees.filter(emp => emp.score >= 50 && emp.score < 70),
+                needsImprovement: allEmployees.filter(emp => emp.score < 50)
+            };
+            
+            categoriesContainer.innerHTML = `
+                <div class="category-card excellent">
+                    <div class="category-header">
+                        <div class="category-icon excellent"></div>
+                        <div class="category-title">Excellent Performance</div>
+                        <div class="category-count">${categories.excellent.length}</div>
+                    </div>
+                    <ul class="employee-list">
+                        ${categories.excellent.length > 0 ? 
+                            categories.excellent.map(emp => `
+                                <li class="employee-list-item">
+                                    <div>
+                                        <div class="employee-name-list">${emp.name}</div>
+                                        <div class="employee-dept-list">${emp.department.replace('-', ' ')}</div>
+                                    </div>
+                                    <div class="employee-score-list excellent">${emp.score}%</div>
+                                </li>
+                            `).join('') :
+                            '<li class="empty-category">No employees in this category</li>'
+                        }
+                    </ul>
+                </div>
+                
+                <div class="category-card good">
+                    <div class="category-header">
+                        <div class="category-icon good"></div>
+                        <div class="category-title">Good Performance</div>
+                        <div class="category-count">${categories.good.length}</div>
+                    </div>
+                    <ul class="employee-list">
+                        ${categories.good.length > 0 ? 
+                            categories.good.map(emp => `
+                                <li class="employee-list-item">
+                                    <div>
+                                        <div class="employee-name-list">${emp.name}</div>
+                                        <div class="employee-dept-list">${emp.department.replace('-', ' ')}</div>
+                                    </div>
+                                    <div class="employee-score-list good">${emp.score}%</div>
+                                </li>
+                            `).join('') :
+                            '<li class="empty-category">No employees in this category</li>'
+                        }
+                    </ul>
+                </div>
+                
+                <div class="category-card average">
+                    <div class="category-header">
+                        <div class="category-icon average"></div>
+                        <div class="category-title">Average Performance</div>
+                        <div class="category-count">${categories.average.length}</div>
+                    </div>
+                    <ul class="employee-list">
+                        ${categories.average.length > 0 ? 
+                            categories.average.map(emp => `
+                                <li class="employee-list-item">
+                                    <div>
+                                        <div class="employee-name-list">${emp.name}</div>
+                                        <div class="employee-dept-list">${emp.department.replace('-', ' ')}</div>
+                                    </div>
+                                    <div class="employee-score-list average">${emp.score}%</div>
+                                </li>
+                            `).join('') :
+                            '<li class="empty-category">No employees in this category</li>'
+                        }
+                    </ul>
+                </div>
+                
+                <div class="category-card needs-improvement">
+                    <div class="category-header">
+                        <div class="category-icon needs-improvement"></div>
+                        <div class="category-title">Needs Improvement</div>
+                        <div class="category-count">${categories.needsImprovement.length}</div>
+                    </div>
+                    <ul class="employee-list">
+                        ${categories.needsImprovement.length > 0 ? 
+                            categories.needsImprovement.map(emp => `
+                                <li class="employee-list-item">
+                                    <div>
+                                        <div class="employee-name-list">${emp.name}</div>
+                                        <div class="employee-dept-list">${emp.department.replace('-', ' ')}</div>
+                                    </div>
+                                    <div class="employee-score-list needs-improvement">${emp.score}%</div>
+                                </li>
+                            `).join('') :
+                            '<li class="empty-category">No employees in this category</li>'
+                        }
+                    </ul>
+                </div>
+            `;
+            
+            const totalEmployees = allEmployees.length;
+            const averageScore = totalEmployees > 0 ? Math.round(allEmployees.reduce((sum, emp) => sum + emp.score, 0) / totalEmployees) : 0;
+            const excellentCount = categories.excellent.length;
+            const needsImprovementCount = categories.needsImprovement.length;
+            const topPerformer = allEmployees.length > 0 ? allEmployees[0] : null;
+            
+            statsContainer.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${totalEmployees}</div>
+                    <div class="stat-label">Total Employees</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${averageScore}%</div>
+                    <div class="stat-label">Average Score</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${excellentCount}</div>
+                    <div class="stat-label">Excellent (90%+)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${needsImprovementCount}</div>
+                    <div class="stat-label">Need Improvement</div>
+                </div>
+                ${topPerformer ? `
+                <div class="stat-card">
+                    <div class="stat-value">${topPerformer.score}%</div>
+                    <div class="stat-label">Top: ${topPerformer.name}</div>
+                </div>
+                ` : ''}
+            `;
+        }
+
+        // Render department employees
+        function renderDepartment(department) {
+            const container = document.getElementById(department + '-employees');
+            const employees = employeeData[department];
+
+            if (employees.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.3;">👥</div>
+                        <h3>No employees added yet</h3>
+                        <p>Use the form above to add your first team member</p>
+                    </div>
+                `;
+                return;
+            }
+
+            employees.sort((a, b) => {
+                if (a.isManager && !b.isManager) return -1;
+                if (!a.isManager && b.isManager) return 1;
+                return 0;
+            });
+
+            container.innerHTML = employees.map(employee => {
+                const completionPercentage = calculateWeightedCompletion(employee);
+                const doingCount = Object.values(employee.evaluations || {}).filter(val => val === 'doing').length;
+                const sometimesCount = Object.values(employee.evaluations || {}).filter(val => val === 'sometimes').length;
+                
+                return `
+                    <div id="employee-card-${department}-${employee.id}" class="employee-card ${employee.isManager ? 'manager-card' : ''}">
+                        <div class="employee-header">
+                            <div class="employee-info">
+                                <input type="text" 
+                                       class="editable-name" 
+                                       value="${employee.name}"
+                                       onblur="updateEmployeeField('${department}', ${employee.id}, 'name', this.value); updateEmployeeNavigation('${department}')"
+                                       placeholder="Employee Name">
+                                <input type="text" 
+                                       class="editable-title" 
+                                       value="${employee.title}"
+                                       onblur="updateEmployeeField('${department}', ${employee.id}, 'title', this.value); updateEmployeeNavigation('${department}')"
+                                       placeholder="Job Title">
+                                ${employee.isManager ? '<span class="manager-badge">Manager</span>' : ''}
+                            </div>
+                            <div class="employee-actions">
+                                <button class="delete-btn" onclick="console.log('Delete button clicked for employee:', '${employee.id}', 'in department:', '${department}'); deleteEmployee('${department}', ${employee.id})">Delete</button>
+                            </div>
+                        </div>
+                        
+                        <div class="responsibilities">
+                            <h4>Responsibilities & Evaluation:</h4>
+                            
+                            <div class="responsibility-header">
+                                <div>Move</div>
+                                <div>Performance Level</div>
+                                <div>Weight</div>
+                                <div>Responsibility</div>
+                                <div>Weight</div>
+                                <div>Employee Notes</div>
+                                <div>Manager Notes</div>
+                                <div>Action</div>
+                            </div>
+                            
+                            ${employee.responsibilities.map((resp, index) => {
+                                const weight = (employee.responsibilityWeights && employee.responsibilityWeights[index]) || 2;
+                                const employeeNote = employee.responsibilityNotes && employee.responsibilityNotes[index] && employee.responsibilityNotes[index].employee || '';
+                                const managerNote = employee.responsibilityNotes && employee.responsibilityNotes[index] && employee.responsibilityNotes[index].manager || '';
+                                const currentPerformance = employee.evaluations && employee.evaluations[index] || 'not-doing';
+                                
+                                return `
+                                    <div class="responsibility-item">
+                                        <div>
+                                            <button class="move-btn" onclick="moveResponsibility('${department}', ${employee.id}, ${index}, 'up')" ${index === 0 ? 'disabled' : ''}>↑</button>
+                                            <button class="move-btn" onclick="moveResponsibility('${department}', ${employee.id}, ${index}, 'down')" ${index === employee.responsibilities.length - 1 ? 'disabled' : ''}>↓</button>
+                                        </div>
+                                        <div class="checkbox-group">
+                                            <input type="radio" 
+                                                   id="doing-${department}-${employee.id}-${index}" 
+                                                   name="performance-${department}-${employee.id}-${index}"
+                                                   value="doing"
+                                                   ${currentPerformance === 'doing' ? 'checked' : ''}
+                                                   onchange="updatePerformance('${department}', ${employee.id}, ${index}, 'doing')">
+                                            <label for="doing-${department}-${employee.id}-${index}" class="doing">✓</label>
+                                            
+                                            <input type="radio" 
+                                                   id="sometimes-${department}-${employee.id}-${index}" 
+                                                   name="performance-${department}-${employee.id}-${index}"
+                                                   value="sometimes"
+                                                   ${currentPerformance === 'sometimes' ? 'checked' : ''}
+                                                   onchange="updatePerformance('${department}', ${employee.id}, ${index}, 'sometimes')">
+                                            <label for="sometimes-${department}-${employee.id}-${index}" class="sometimes">~</label>
+                                            
+                                            <input type="radio" 
+                                                   id="not-doing-${department}-${employee.id}-${index}" 
+                                                   name="performance-${department}-${employee.id}-${index}"
+                                                   value="not-doing"
+                                                   ${currentPerformance === 'not-doing' ? 'checked' : ''}
+                                                   onchange="updatePerformance('${department}', ${employee.id}, ${index}, 'not-doing')">
+                                            <label for="not-doing-${department}-${employee.id}-${index}" class="not-doing">✗</label>
+                                        </div>
+                                        <div style="font-size: 0.7rem; color: #6c757d;">
+                                            ${weight}x
+                                        </div>
+                                        <input type="text" 
+                                               class="responsibility-text"
+                                               value="${resp}"
+                                               onblur="updateEmployeeField('${department}', ${employee.id}, 'responsibilities', [...document.querySelectorAll('#employee-card-${department}-${employee.id} .responsibility-text')].map(el => el.value))"
+                                               placeholder="Responsibility description">
+                                        <select class="weight-select" 
+                                                value="${weight}"
+                                                onchange="updateWeight('${department}', ${employee.id}, ${index}, this.value)">
+                                            <option value="1" ${weight === 1 ? 'selected' : ''}>Low (1x)</option>
+                                            <option value="2" ${weight === 2 ? 'selected' : ''}>Medium (2x)</option>
+                                            <option value="3" ${weight === 3 ? 'selected' : ''}>High (3x)</option>
+                                            <option value="4" ${weight === 4 ? 'selected' : ''}>Critical (4x)</option>
+                                        </select>
+                                        <textarea class="notes-input" 
+                                                  placeholder="Employee notes..."
+                                                  onblur="updateNotes('${department}', ${employee.id}, ${index}, 'employee', this.value)">${employeeNote}</textarea>
+                                        <textarea class="notes-input" 
+                                                  placeholder="Manager notes..."
+                                                  onblur="updateNotes('${department}', ${employee.id}, ${index}, 'manager', this.value)">${managerNote}</textarea>
+                                        <button class="delete-resp-btn" 
+                                                onclick="console.log('Delete responsibility clicked for employee:', '${employee.id}', 'responsibility index:', '${index}'); deleteResponsibility('${department}', ${employee.id}, ${index})">Del</button>
+                                    </div>
+                                `;
+                            }).join('')}
+                            
+                            <div class="add-responsibility">
+                                <input type="text" 
+                                       id="add-resp-${department}-${employee.id}"
+                                       placeholder="Add new responsibility..."
+                                       onkeypress="if(event.key==='Enter') addResponsibility('${department}', ${employee.id})">
+                                <button onclick="addResponsibility('${department}', ${employee.id})">Add</button>
+                            </div>
+                            
+                            <div id="summary-${department}-${employee.id}" class="completion-summary">
+                                Performance: ${completionPercentage}% weighted (${doingCount} doing, ${sometimesCount} sometimes, ${employee.responsibilities.length - doingCount - sometimesCount} not doing)
+                            </div>
+                        </div>
+                        
+                        <div class="notes-section">
+                            <h4>General Notes:</h4>
+                            <textarea class="editable-textarea" 
+                                      placeholder="General notes and observations..."
+                                      onblur="updateEmployeeField('${department}', ${employee.id}, 'notes', this.value)">${employee.notes}</textarea>
+                        </div>
+                        
+                        <div class="improvement-section">
+                            <h4>Improvement Plan:</h4>
+                            <textarea class="editable-textarea" 
+                                      placeholder="Areas for improvement, goals, and action items..."
+                                      onblur="updateEmployeeField('${department}', ${employee.id}, 'improvementPlan', this.value)">${employee.improvementPlan}</textarea>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            if (selectedEmployees[department]) {
+                const selectedEmployee = employees.find(emp => emp.id === selectedEmployees[department]);
+                if (selectedEmployee) {
+                    navigateToEmployee(department, selectedEmployees[department]);
+                } else {
+                    selectedEmployees[department] = null;
+                }
+            }
+        }
+
+        // Render all departments
+        function renderAllDepartments() {
+            Object.keys(employeeData).forEach(department => {
+                renderDepartment(department);
+                updateEmployeeNavigation(department);
+            });
+            renderPerformanceDashboard();
+        }
+
+        // Export data to JSON file
+        function exportData() {
+            const dataStr = JSON.stringify(employeeData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `employee-data-${new Date().toISOString().slice(0, 10)}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // Import data from JSON file
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    if (typeof importedData === 'object' && 
+                        importedData['driver-management'] && 
+                        importedData['afterhours'] && 
+                        importedData['roadside'] && 
+                        importedData['recruitment'] && 
+                        importedData['dispatcher']) {
+                        
+                        employeeData = importedData;
+                        renderAllDepartments();
+                        autoSave();
+                        alert('Data imported successfully!');
+                    } else {
+                        alert('Invalid file format. Please select a valid employee data file.');
+                    }
+                } catch (error) {
+                    alert('Error reading file. Please make sure it\'s a valid JSON file.');
+                }
+            };
+            reader.readAsText(file);
+            
+            event.target.value = '';
+        }
+
+        // Initialize when page loads
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
